@@ -1,0 +1,49 @@
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+
+# IDE
+.idea/
+.vscode/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables / secrets
+.env
+.env.*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Python packaging
+*.egg-info/
+dist/
+build/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Local model / AI files
+*.gguf
+*.bin
+
+# Generated reports
+reports/*.csv
+reports/*.txt
+
+# Local databases
+*.db
+*.sqlite
+*.sqlite3
