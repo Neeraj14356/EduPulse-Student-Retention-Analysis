@@ -5,6 +5,9 @@ requires-python = ">=3.11"
 dependencies = [
     "ipykernel>=7.3.0",
     "mysql-connector-python>=26.7.0",
+    "pandas>=2.0.0",
     "pandas-stubs~=3.0.5",
     "scipy-stubs~=1.17.1",
+    "openai",
+    "requests",
 ]
