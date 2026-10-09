@@ -18,7 +18,7 @@ def profile_data(df):
     print(df.nunique())
 
 if __name__ == "__main__":
-    file_path = "D:/Project/AI_Excel_Analytics_Agent/data/student_cleaned.csv"
+    file_path = "data/student_cleaned.csv"
 
     df = pd.read_csv(file_path)
 

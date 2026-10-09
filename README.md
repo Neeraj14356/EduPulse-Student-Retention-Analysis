@@ -1,109 +1,185 @@
-# 🎓 EduPulse: Student Retention Analytics
+# 🎓 EduPulse: Student Retention & Dropout Analytics
 
-EduPulse is a professional end-to-end data analytics project designed to identify key drivers of student attrition in higher education. By combining statistical validation, automated anomaly detection, and LLM-powered insights, the project provides a scalable framework for academic institutions to implement early-warning systems.
+EduPulse is an end-to-end data analytics project designed to analyze student outcomes and identify academic and financial indicators associated with higher observed dropout rates in higher education.
+
+The project combines SQL business analysis, Python-based exploratory data analysis, statistical validation, automated anomaly detection, AI-generated business insights, n8n workflow automation, email notifications, and an interactive Power BI dashboard.
+
+The goal is to help educational institutions understand student outcome patterns and identify student groups that may benefit from earlier academic or financial support.
 
 ---
 
-## 🚀 Executive Summary
+## 📌 Executive Summary
 
-**The Challenge:** High student dropout rates lead to significant academic and financial losses. The goal was to pinpoint the most critical indicators of attrition.
+### Business Problem
 
-**Key Validated Findings:**
-- **Academic Decline:** A strong statistical association exists between falling grades in the 2nd semester and dropout status. Dropout students showed a significant decline in average grades and approved curricular units compared to graduates.
-- **Financial Stress:** There is a statistically significant association between financial instability—specifically **debtor status** and **unpaid tuition fees**—and higher dropout rates.
-- **High-Risk Segment:** Students exhibiting both poor academic performance (Grade < 8) and financial constraints show a markedly higher probability of attrition.
-- **Validation:** All key findings were validated using **Welch's t-tests** (for numeric grade differences) and **Chi-square tests** (for categorical financial factors), with p-values < 0.05.
+Student dropout is an important challenge for higher education institutions. Understanding how academic performance, financial circumstances, and student characteristics relate to dropout outcomes can help institutions plan targeted support initiatives.
 
-**Business Impact:** By monitoring these indicators in real-time, institutions can shift from reactive reporting to proactive intervention, targeting "at-risk" students before the point of no return.
+EduPulse analyzes student academic and financial data to identify patterns associated with student dropout and communicate the findings through an interactive dashboard and an automated reporting workflow.
+
+### Key Validated Findings
+
+- **Academic Performance:** Dropout students had a substantially lower average second-semester grade than graduate students (5.90 versus 12.70). They also had fewer average approved curricular units (1.94 versus 6.18).
+- **Financial Indicators:** Students whose tuition fees were not up to date had an observed dropout rate of 86.5%, compared with 24.7% among students whose fees were up to date.
+- **Debtor Status:** Students classified as debtors had an observed dropout rate of 62.0%, compared with 28.3% among non-debtors.
+- **Scholarship Status:** Scholarship holders had an observed dropout rate of 12.2%, compared with 38.7% among non-scholarship holders.
+- **High-Risk Segment:** Students with second-semester grades below 8 and overdue tuition fees had an observed dropout rate of 97.0% in the analyzed dataset.
+- **Statistical Validation:** Welch's t-tests, Chi-square tests, and Cramér's V were used to examine differences and associations in the data.
+
+### Business Value
+
+EduPulse helps stakeholders explore dropout patterns, review statistically supported findings, identify student segments with higher observed dropout rates, and consider targeted academic or financial support.
+
+The analysis identifies associations rather than proving causation or predicting an individual student's future outcome.
 
 ---
 
 ## 🛠️ Technical Highlights
 
-This project demonstrates a full-stack data engineering and analytics pipeline:
+### 1. SQL Business Analysis
+Used SQL to investigate business questions related to overall student outcome distribution, financial status, and academic progress. Queries are available in `sql/dropout_analysis.sql`.
 
-- **SQL Analysis**: Performed deep-dive business queries to extract specific dropout patterns.
-- **Python EDA**: Used Pandas and NumPy for comprehensive data cleaning and exploratory analysis.
-- **Statistical Validation**: Implemented inferential statistics (Welch's t-tests, Chi-square, Cramér's V) to ensure findings were not due to random chance.
-- **Anomaly Detection**: Built a custom IQR-based outlier detection system to monitor data quality and identify extreme student cases.
-- **AI Automation (Ollama)**: Integrated a local LLM (via Ollama) to automatically translate raw statistical anomalies into professional business insights.
-- **Automated Notification**: Developed an SMTP-based alert system to notify administrators instantly when data anomalies are detected.
-- **Interactive Dashboard**: Created a professional Streamlit application for stakeholder data exploration.
+### 2. Python EDA and Data Quality
+Used Python, Pandas, and NumPy to inspect the dataset, validate data quality, and prepare the data for further analysis.
+
+### 3. Statistical Analysis
+Used SciPy and statistical methods to investigate differences and associations:
+- Welch's t-tests for numeric group comparisons
+- Chi-square tests for categorical associations
+- Cramér's V to measure association strength
+
+### 4. Automated Anomaly Detection
+Developed a modular anomaly detection pipeline using the Interquartile Range (IQR) method to check numeric anomalies, unexpected categorical values, duplicates, and missing values.
+
+### 5. Dual-Path Notification & Insights Workflow
+The project employs two distinct notification paths to handle different types of findings:
+
+- **AI-Powered Insights (Business Report):**
+  `Python (main.py)` $\rightarrow$ `n8n Webhook` $\rightarrow$ `AI (GPT-5-mini)` $\rightarrow$ `IF Condition` $\rightarrow$ `Gmail Notification`.
+  This path transforms validated statistical results into business-friendly recommendations.
+
+- **Technical Anomaly Alerts (Data Quality):**
+  `Python (main.py)` $\rightarrow$ `src/notifier.py` $\rightarrow$ `Gmail Notification`.
+  This path provides immediate technical alerts when data anomalies are detected during the pipeline run.
+
+### 6. Interactive Power BI Dashboard
+Built a three-page Power BI dashboard:
+- **Page 1 — Executive Overview:** Student outcomes, overall dropout rate, age groups, and financial indicators.
+- **Page 2 — Dropout Drivers:** Academic performance, approved curricular units, and risk segments.
+- **Page 3 — Statistical & AI Insights:** Statistical evidence, Cramér's V, and AI-driven business recommendations.
 
 ---
 
-## ⚙️ Architecture & Workflow
+## 📊 Dataset
 
-### Data $\to$ Insight $\to$ Action
-`Raw Data` $\to$ `Statistical Analysis` $\to$ `Anomaly Detection` $\to$ `AI Interpretation` $\to$ `Stakeholder Notification` $\to$ `Executive Dashboard`
+**Dataset:** Student Dropout and Academic Success — UCI Machine Learning Repository
+The cleaned dataset used in the project contains 4,424 student records.
 
-**Detailed Workflow:**
-1. **Data Cleaning**: Raw student data is pre-processed into a cleaned, analysis-ready format.
-2. **Statistical Validation**: Jupyter Notebooks are used to validate hypotheses and calculate p-values.
-3. **Anomaly Pipeline**: `main.py` runs automated checks for numeric and categorical outliers.
-4. **AI Layer**: The LLM analyzes the anomaly report and generates a strategic summary in `reports/ai_insight.txt`.
-5. **Alerting**: If anomalies are found, the system triggers an automated email notification.
-6. **Visualization**: Findings are surfaced in a professional Streamlit dashboard for business users.
+### Overall Student Outcomes
+
+| Outcome | Students | Percentage |
+|---|---:|---:|
+| Graduate | 2,209 | 49.93% |
+| Dropout | 1,421 | 32.12% |
+| Enrolled | 794 | 17.95% |
+| **Total** | **4,424** | **100%** |
 
 ---
 
-## 📊 Project Details
+## ⚙️ Architecture and Workflow
 
-### Dataset
-A comprehensive student academic dataset containing:
-- **Demographics**: Age, Gender, Nationality, Marital Status.
-- **Academic Performance**: Curricular units approved/enrolled, grades for 1st and 2nd semesters.
-- **Financial Status**: Tuition fee status, Scholarship holder, Debtor status.
-- **Socio-Economic Factors**: GDP, Inflation rate, Unemployment rate.
-- **Outcome**: Graduate, Dropout, or Enrolled.
+### Workflow Steps
+1. **Data Preparation:** Load the cleaned student dataset.
+2. **Business and Statistical Analysis:** Use SQL and Python notebooks to investigate outcomes and validate findings.
+3. **Anomaly Detection:** Run `main.py` to detect anomalies and data quality issues.
+4. **Webhook Integration:** Send anomaly counts and validated analysis results to the n8n webhook.
+5. **AI Interpretation (n8n):** GPT-5-mini produces structured business insights from the results.
+6. **Notification Dispatch:**
+   - **AI Report:** Sent via n8n when the configured condition is met.
+   - **Technical Alert:** Sent directly via Python SMTP if anomalies are found.
+7. **Dashboard Reporting:** Use Power BI to explore detailed patterns and findings.
 
-### Tech Stack
-- **Language**: Python 3.11
-- **Analysis**: Pandas, NumPy, SciPy, SQL
-- **AI**: Ollama (Local LLM)
-- **UI**: Streamlit
-- **Package Management**: UV
-- **Notification**: smtplib (SMTP SSL)
+---
 
-### Project Structure
+## 🗂️ Project Structure
+
 ```text
-.
-├── app.py               # Professional Streamlit Dashboard
-├── main.py              # Automation & AI Pipeline
-├── data/                # Cleaned datasets
-├── notebooks/           # Validated Statistical Research
-├── reports/             # AI Insights & Anomaly Reports
-├── sql/                # Business Analysis Queries
-├── src/                 # Modular Logic
-│   ├── ai_insights.py   # LLM Integration
-│   ├── anomaly_detection.py # IQR Outlier Logic
-│   ├── categorical_anomaly.py # Categorical Checks
-│   ├── notifier.py      # SMTP Email System
-│   └── profiler.py      # Data Profiling Tools
-└── README.md            # Project Documentation
+AI_Excel_Analytics_Agent/
+│
+├── data/
+│   └── student_cleaned.csv
+│
+├── notebooks/
+│   └── edupulse_student_retention_analysis.ipynb
+│
+├── reports/
+│   ├── anomaly_report.csv
+│   └── EduPulse_Student_Retention_Analysis.pbix
+│
+├── sql/
+│   └── dropout_analysis.sql
+│
+├── src/
+│   ├── anomaly_detection.py
+│   ├── categorical_anomaly.py
+│   ├── n8n_integration.py
+│   ├── notifier.py
+│   └── profiler.py
+│
+├── AI project.pbix
+├── main.py
+├── pyproject.toml
+├── uv.lock
+├── .gitignore
+└── README.md
 ```
 
 ---
 
-## 🏃 How to Run
+## 🚀 How to Run
 
-1. **Setup Environment**:
-   ```bash
-   uv sync
-   ```
-2. **Run Automation Pipeline**:
-   (Ensures reports are generated and AI insights are updated)
-   ```bash
-   python main.py
-   ```
-3. **Launch Executive Dashboard**:
-   ```bash
-   streamlit run app.py
-   ```
+### Prerequisites
+- Python 3.11
+- MySQL (for SQL analysis)
+- Power BI Desktop
+- n8n instance with configured workflow (OpenAI & Gmail nodes)
 
-## ⚠️ Important Limitations
-- **Association $\neq$ Causation**: This project identifies statistical correlations. It does not prove that a specific factor (e.g., debtor status) directly *caused* a student to drop out.
-- **Local AI**: Requires a local Ollama instance running the specified model for the AI Insights section to function.
+### 1. Clone and Install
+```bash
+git clone https://github.com/Neeraj14356/EduPulse-Student-Retention-Analysis.git
+cd EduPulse-Student-Retention-Analysis
+uv sync
+```
+
+### 2. Configure Environment
+Set the following environment variables:
+- `EDUPULSE_N8N_WEBHOOK_URL`: Your n8n webhook URL.
+- `EMAIL_SENDER`, `EMAIL_PASSWORD`, `EMAIL_RECEIVER`: Credentials for the Python SMTP alert system.
+
+### 3. Run the Pipeline
+```bash
+python main.py
+```
+
+### 4. Open the Power BI Dashboard
+Open either:
+- `reports/EduPulse_Student_Retention_Analysis.pbix`
+- `AI project.pbix` (root)
 
 ---
-*Developed as a professional data analyst portfolio project.*
+
+## ⚠️ Limitations
+- **Association $\neq$ Causation:** Findings identify statistical relationships, not causal links.
+- **No Individual Prediction:** The project analyzes groups, not individual student risk.
+- **Dashboard Refresh:** The dashboard should not be described as real-time unless a refresh pipeline is implemented.
+
+## 🔮 Future Improvements
+- Build and validate a machine-learning model for individual dropout risk estimation.
+- Connect Power BI to a repeatable refresh pipeline.
+- Track academic or financial interventions and evaluate their outcomes.
+
+---
+
+## 👨‍💻 Author
+**Neeraj Singh**
+Data Analytics | SQL | Python | Statistics | Power BI | AI Automation
+[LinkedIn](https://linkedin.com/in/neeraj-singh-80a25321b)
