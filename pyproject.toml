@@ -10,4 +10,5 @@ dependencies = [
     "scipy>=1.10.0",
     "scipy-stubs~=1.17.1",
     "requests",
+    "fpdf2>=2.8.9",
 ]
